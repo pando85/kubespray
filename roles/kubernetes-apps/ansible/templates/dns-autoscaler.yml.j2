@@ -38,6 +38,7 @@ spec:
         fsGroup: 65534
       nodeSelector:
         kubernetes.io/os: linux
+        kubernetes.io/arch: {{ image_arch }}
       tolerations:
         - effect: NoSchedule
           operator: Equal

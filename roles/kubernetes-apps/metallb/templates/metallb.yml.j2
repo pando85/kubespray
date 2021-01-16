@@ -317,8 +317,8 @@ spec:
             secretKeyRef:
               name: memberlist
               key: secretkey
-        image: metallb/speaker:{{ metallb_version }}
-        imagePullPolicy: Always
+        image: {{ metallb_speaker_image_repo }}:{{ metallb_version }}
+        imagePullPolicy: {{ k8s_image_pull_policy }}
         name: speaker
         ports:
         - containerPort: {{ metallb_port }}
@@ -339,7 +339,7 @@ spec:
           readOnlyRootFilesystem: true
       hostNetwork: true
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        {{ 'beta.' if kube_version is version('v1.18.0', '<') }}kubernetes.io/os: linux
       serviceAccountName: speaker
       terminationGracePeriodSeconds: 2
       tolerations:
@@ -373,8 +373,8 @@ spec:
       - args:
         - --port={{ metallb_port }}
         - --config=config
-        image: metallb/controller:{{ metallb_version }}
-        imagePullPolicy: Always
+        image: {{ metallb_controller_image_repo }}:{{ metallb_version }}
+        imagePullPolicy: {{ k8s_image_pull_policy }}
         name: controller
         ports:
         - containerPort: {{ metallb_port }}
@@ -390,7 +390,7 @@ spec:
             - all
           readOnlyRootFilesystem: true
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        {{ 'beta.' if kube_version is version('v1.18.0', '<') }}kubernetes.io/os: linux
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
